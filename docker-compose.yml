@@ -1,5 +1,9 @@
 version: "3"
 services:
+  app:
+    build: .
+    volumes:
+      - ./app:/home/app/app
   zookeeper:
     image: wurstmeister/zookeeper
     ports:
