@@ -1,18 +1,26 @@
 version: "3"
 services:
-  app:
+  consumer:
     build: .
     volumes:
-      - ./app:/home/app/app
+      - ./consumer:/home/app/app
+  producer:
+    build: .
+    volumes:
+      - ./producer:/home/app/app
+  topic:
+    image: ches/kafka
+    command: "kafka-topics.sh --create --topic darksouls --replication-factor 1 --partitions 1 --zookeeper zookeeper:2181"
+    depends_on:
+      - zookeeper
+      - kafka
   zookeeper:
-    image: wurstmeister/zookeeper
+    image: zookeeper:3.4
     ports:
       - "2181:2181"
   kafka:
-    image: wurstmeister/kafka
+    image: ches/kafka
     ports:
       - "9092:9092"
     environment:
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_HOST_NAME: 10.27.12.76
-      KAFKA_CREATE_TOPICS: "darksouls:1:1"
+      ZOOKEEPER_IP: zookeeper
